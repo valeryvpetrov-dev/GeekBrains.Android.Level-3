@@ -7,9 +7,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity :
     AppCompatActivity(),
-    View.OnClickListener, MainView {
+    View.OnClickListener, CounterContract.View {
 
-    private val mPresenter: Presenter by lazy {
+    private val mPresenter: CounterContract.Presenter by lazy {
         Presenter(this, Model())
     }
 
@@ -23,7 +23,7 @@ class MainActivity :
     }
 
     override fun onClick(view: View) {
-        mPresenter.onButtonClick(
+        mPresenter.incCounter(
             when (view.id) {
                 R.id.btnCounter1 -> 0
                 R.id.btnCounter2 -> 1
@@ -33,7 +33,7 @@ class MainActivity :
         )
     }
 
-    override fun setButtonText(index: Int, value: Int) {
+    override fun updateCounter(index: Int, value: Int) {
         when (index) {
             0 -> btnCounter1.text = "Counter = $value"
             1 -> btnCounter2.text = "Counter = $value"
