@@ -9,18 +9,29 @@ class MainActivity :
     AppCompatActivity(),
     View.OnClickListener, CounterContract.View {
 
-    private val mPresenter: CounterContract.Presenter by lazy {
-        Presenter(this, Model())
-    }
+    private lateinit var mPresenter: CounterContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        attachPresenter()
 
         btnCounter1.setOnClickListener(this)
         btnCounter2.setOnClickListener(this)
         btnCounter3.setOnClickListener(this)
     }
+
+    override fun onStart() {
+        super.onStart()
+        mPresenter.restoreViewState()
+    }
+
+    override fun onDestroy() {
+        detachPresenter()
+        super.onDestroy()
+    }
+
+    override fun onRetainCustomNonConfigurationInstance() = mPresenter
 
     override fun onClick(view: View) {
         mPresenter.incCounter(
@@ -31,6 +42,19 @@ class MainActivity :
                 else -> -1
             }
         )
+    }
+
+    override fun attachPresenter() {
+        if (lastCustomNonConfigurationInstance != null) {
+            mPresenter = lastCustomNonConfigurationInstance as CounterContract.Presenter
+        } else {
+            mPresenter = Presenter(this, Model())
+        }
+        mPresenter.attachView(this)
+    }
+
+    override fun detachPresenter() {
+        mPresenter.detachView()
     }
 
     override fun updateCounter(index: Int, value: Int) {
