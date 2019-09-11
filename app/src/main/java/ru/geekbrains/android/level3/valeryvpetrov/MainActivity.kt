@@ -23,14 +23,21 @@ class MainActivity :
     }
 
     override fun onClick(view: View) {
-        mPresenter.onButtonClick(view.id)
+        mPresenter.onButtonClick(
+            when (view.id) {
+                R.id.btnCounter1 -> 0
+                R.id.btnCounter2 -> 1
+                R.id.btnCounter3 -> 2
+                else -> -1
+            }
+        )
     }
 
-    override fun setButtonText(buttonId: Int, value: Int) {
-        when (buttonId) {
-            R.id.btnCounter1 -> btnCounter1.text = "Counter = $value"
-            R.id.btnCounter2 -> btnCounter2.text = "Counter = $value"
-            R.id.btnCounter3 -> btnCounter3.text = "Counter = $value"
+    override fun setButtonText(index: Int, value: Int) {
+        when (index) {
+            0 -> btnCounter1.text = "Counter = $value"
+            1 -> btnCounter2.text = "Counter = $value"
+            2 -> btnCounter3.text = "Counter = $value"
         }
     }
 }
