@@ -2,16 +2,21 @@ package ru.geekbrains.android.level3.valeryvpetrov
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import com.arellomobile.mvp.MvpAppCompatActivity
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity :
-    AppCompatActivity(),
-    View.OnClickListener, CounterContract.View {
+    MvpAppCompatActivity(),
+    IMainView,
+    View.OnClickListener {
 
-    private val mPresenter: CounterContract.Presenter by lazy {
-        Presenter(this, Model())
-    }
+    @InjectPresenter
+    lateinit var mPresenter: MainPresenter
+
+    @ProvidePresenter
+    fun providePresenter() = MainPresenter(Model())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,20 +29,24 @@ class MainActivity :
 
     override fun onClick(view: View) {
         mPresenter.incCounter(
-            when (view.id) {
-                R.id.btnCounter1 -> 0
-                R.id.btnCounter2 -> 1
-                R.id.btnCounter3 -> 2
+            when (view.id) {    // view does not know about business logic
+                R.id.btnCounter1 -> 1
+                R.id.btnCounter2 -> 2
+                R.id.btnCounter3 -> 3
                 else -> -1
             }
         )
     }
 
-    override fun updateCounter(index: Int, value: Int) {
-        when (index) {
-            0 -> btnCounter1.text = "Counter = $value"
-            1 -> btnCounter2.text = "Counter = $value"
-            2 -> btnCounter3.text = "Counter = $value"
-        }
+    override fun updateCounter1(value: Int) {
+        btnCounter1.text = "Counter = $value"
+    }
+
+    override fun updateCounter2(value: Int) {
+        btnCounter2.text = "Counter = $value"
+    }
+
+    override fun updateCounter3(value: Int) {
+        btnCounter3.text = "Counter = $value"
     }
 }
